@@ -15,6 +15,7 @@ import Footer from './components/Footer';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import BottomNav from './components/BottomNav';
+import Toast from './components/Toast';
 import { dbService } from './lib/db';
 import { auth } from './lib/firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -39,6 +40,32 @@ export default function App() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = React.useState(false);
   const [authLoading, setAuthLoading] = React.useState(true); // prevent flicker before session restore
   const [showMobileFilters, setShowMobileFilters] = React.useState(false);
+  const [isSubmittingCheckout, setIsSubmittingCheckout] = React.useState(false);
+  const [toast, setToast] = React.useState<{message: string, type: 'success'|'error'} | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
+  };
+
+  // History API for Mobile Back Button
+  React.useEffect(() => {
+    window.history.replaceState({ tab: 'home' }, '', '/');
+    const handlePopState = (e: PopStateEvent) => {
+      if (e.state && e.state.tab) {
+        setActiveTab(e.state.tab);
+      } else {
+        setActiveTab('home');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  React.useEffect(() => {
+    if (window.history.state?.tab !== activeTab) {
+      window.history.pushState({ tab: activeTab }, '', `/?tab=${activeTab}`);
+    }
+  }, [activeTab]);
 
   React.useEffect(() => {
     const configured = !!(
@@ -245,7 +272,7 @@ export default function App() {
     }
 
     if (laptop.status === 'out_of_stock' || (laptop.quantity !== undefined && laptop.quantity <= 0)) {
-      alert('❌ عذراً، هذا الجهاز غير متوفر حالياً في المخزون.');
+      showToast('عذراً، هذا الجهاز غير متوفر حالياً في المخزون.', 'error');
       return;
     }
 
@@ -260,7 +287,7 @@ export default function App() {
     });
 
     // Elegant feedback
-    alert(`تمت إضافة ${laptop.name} إلى السلة بنجاح!`);
+    showToast(`تمت إضافة ${laptop.name} إلى السلة بنجاح!`, 'success');
   };
 
   const handleUpdateCartQuantity = (id: string, delta: number) => {
@@ -287,7 +314,7 @@ export default function App() {
   };
 
   const finalizeCheckout = (address: string) => {
-    setShowCheckoutModal(false);
+    setIsSubmittingCheckout(true);
     const subtotal = cart.reduce((acc, item) => acc + item.laptop.price * item.quantity, 0);
     const tax = Math.round(subtotal * 0.15);
     const total = subtotal + tax;
@@ -315,6 +342,8 @@ export default function App() {
     };
 
     dbService.saveOrder(newOrder).then(async (success) => {
+      setIsSubmittingCheckout(false);
+      setShowCheckoutModal(false);
       if (success) {
         setOrders([newOrder, ...orders]);
         setCart([]);
@@ -332,8 +361,9 @@ export default function App() {
           });
           setNotifications(prev => [notif, ...prev]);
         }
+        showToast('تم استلام طلبك بنجاح!', 'success');
       } else {
-        alert('حدث خطأ أثناء حفظ الطلب. يرجى المحاولة مرة أخرى.');
+        showToast('حدث خطأ أثناء حفظ الطلب. يرجى المحاولة مرة أخرى.', 'error');
       }
     });
   };
@@ -394,6 +424,7 @@ export default function App() {
   const cartItemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f9fb]" dir="rtl">
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <Navbar
         activeTab={activeTab}
         setActiveTab={(tab) => {
@@ -738,7 +769,6 @@ export default function App() {
                 scrollToTop();
               }
             }}
-            user={currentUser}
           />
         )}
 
@@ -1049,6 +1079,7 @@ export default function App() {
         <CheckoutModal
           onClose={() => setShowCheckoutModal(false)}
           onConfirm={finalizeCheckout}
+          isSubmitting={isSubmittingCheckout}
         />
       )}
 
@@ -1062,6 +1093,7 @@ export default function App() {
         cartCount={cart.length}
         isLoggedIn={isLoggedIn}
         onOpenMobileFilters={() => setShowMobileFilters(true)}
+        unreadCount={notifications.filter(n => !n.read).length}
       />
 
       {/* Mobile Filters Modal */}
