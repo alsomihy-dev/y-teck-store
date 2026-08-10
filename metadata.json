@@ -1,0 +1,6 @@
+{
+  "name": "Y TECK Laptop Store",
+  "description": "المتجر الرائد لبيع وصيانة أجهزة اللابتوب المجددة والمعتمدة بأعلى معايير الجودة والأداء.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
