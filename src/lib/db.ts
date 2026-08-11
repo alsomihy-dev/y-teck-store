@@ -62,7 +62,7 @@ export const dbService = {
     }
     try {
       const q = query(collection(db, 'laptops'));
-      const snapshot = await getDocs(q);
+      const snapshot = await withTimeout(getDocs(q), 5000);
       if (!snapshot.empty) {
         return snapshot.docs.map(doc => mapDbLaptopToFrontend({ id: doc.id, ...doc.data() }));
       } else {
@@ -130,7 +130,7 @@ export const dbService = {
     }
     try {
       const q = query(collection(db, 'orders'));
-      const snapshot = await getDocs(q);
+      const snapshot = await withTimeout(getDocs(q), 5000);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
     } catch (err) {
       console.error('Failed to fetch orders from Firebase:', err);
@@ -163,7 +163,7 @@ export const dbService = {
     const localUsers = localAuth.getUsers();
     if (!isFirebaseConfigured() || !db) return localUsers;
     try {
-      const snapshot = await getDocs(collection(db, 'profiles'));
+      const snapshot = await withTimeout(getDocs(collection(db, 'profiles')), 5000);
       const dbUsers: User[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
       const dbEmails = new Set(dbUsers.map(u => u.email.toLowerCase()));
       const combined = [...dbUsers];

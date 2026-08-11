@@ -10,6 +10,7 @@ import ProductCard from './components/ProductCard';
 import ProductDetails from './components/ProductDetails';
 import Cart from './components/Cart';
 import OrderHistory from './components/OrderHistory';
+import NotificationsView from './components/NotificationsView';
 import Profile from './components/Profile';
 import Footer from './components/Footer';
 import Login from './components/Login';
@@ -759,6 +760,15 @@ export default function App() {
         {activeTab === 'orders' && (
           <OrderHistory
             orders={orders.filter(o => o.userId === currentUser?.id)}
+            onBackToHome={() => {
+              setActiveTab('home');
+              scrollToTop();
+            }}
+          />
+        )}
+
+        {activeTab === 'notifications' && (
+          <NotificationsView
             notifications={notifications}
             onMarkAsRead={handleMarkAsRead}
             onMarkAllAsRead={handleMarkAllAsRead}

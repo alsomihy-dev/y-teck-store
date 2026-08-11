@@ -86,4 +86,4 @@ export interface UserNotification {
   createdAt: string;
 }
 
-export type ViewTab = 'home' | 'details' | 'cart' | 'orders' | 'profile' | 'login' | 'signup';
+export type ViewTab = 'home' | 'details' | 'cart' | 'orders' | 'profile' | 'login' | 'signup' | 'notifications';

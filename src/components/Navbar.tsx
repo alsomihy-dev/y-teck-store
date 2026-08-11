@@ -114,9 +114,9 @@ export default function Navbar({
               </button>
               {isLoggedIn && !isAdmin && onMarkNotificationAsRead && onMarkAllNotificationsAsRead && (
                 <button
-                  onClick={() => handleNavClick('orders')}
-                  className={`p-1.5 rounded-full hover:bg-slate-50 text-slate-600 transition-colors cursor-pointer relative ${activeTab === 'orders' ? 'bg-slate-100 text-slate-900' : ''}`}
-                  title="الإشعارات والطلبات"
+                  onClick={() => handleNavClick('notifications')}
+                  className={`p-1.5 rounded-full hover:bg-slate-50 text-slate-600 transition-colors cursor-pointer relative ${activeTab === 'notifications' ? 'bg-slate-100 text-slate-900' : ''}`}
+                  title="الإشعارات"
                 >
                   <Bell className="w-5 h-5" />
                   {unreadCount > 0 && (
@@ -183,9 +183,9 @@ export default function Navbar({
 
             {isLoggedIn && !isAdmin && onMarkNotificationAsRead && onMarkAllNotificationsAsRead && (
                 <button
-                  onClick={() => handleNavClick('orders')}
-                  className={`p-2.5 rounded-full hover:bg-slate-50 text-slate-600 transition-colors cursor-pointer relative ${activeTab === 'orders' ? 'bg-slate-100 text-slate-900' : ''}`}
-                  title="الإشعارات والطلبات"
+                  onClick={() => handleNavClick('notifications')}
+                  className={`p-2.5 rounded-full hover:bg-slate-50 text-slate-600 transition-colors cursor-pointer relative ${activeTab === 'notifications' ? 'bg-slate-100 text-slate-900' : ''}`}
+                  title="الإشعارات"
                 >
                   <Bell className="w-6 h-6" />
                   {unreadCount > 0 && (
