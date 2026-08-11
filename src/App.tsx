@@ -17,7 +17,7 @@ import Signup from './components/Signup';
 import BottomNav from './components/BottomNav';
 import Toast from './components/Toast';
 import { dbService } from './lib/db';
-import { auth } from './lib/firebase';
+import { auth, db, isFirebaseConfigured } from './lib/firebase';
 import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
@@ -348,7 +348,18 @@ export default function App() {
   };
 
   const handleRemoveCartItem = (id: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.laptop.id !== id));
+    setCart(cart.filter(item => item.laptop.id !== id));
+  };
+
+  const handleMarkAsRead = async (notificationId: string) => {
+    await dbService.markNotificationAsRead(notificationId);
+    setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));
+  };
+
+  const handleMarkAllAsRead = async () => {
+    if (!currentUser) return;
+    await dbService.markAllNotificationsAsRead(currentUser.id);
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
   const handleCheckout = (paymentMethod: string) => {
