@@ -4,6 +4,19 @@ import { Laptop, Order, User } from '../types';
 import { INITIAL_LAPTOPS, ACCESSORIES } from '../data';
 import { localAuth } from './localAuth';
 
+const withTimeout = <T>(promise: Promise<T>, ms = 8000): Promise<T> => {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('TIMEOUT')), ms);
+    promise.then(res => {
+      clearTimeout(timer);
+      resolve(res);
+    }).catch(err => {
+      clearTimeout(timer);
+      reject(err);
+    });
+  });
+};
+
 const mapDbLaptopToFrontend = (row: any): Laptop => ({
   ...row,
   originalPrice: Number(row.original_price || row.originalPrice),
@@ -135,7 +148,7 @@ export const dbService = {
     }
     try {
       const cleanOrder = JSON.parse(JSON.stringify(order));
-      await setDoc(doc(db, 'orders', order.id), cleanOrder);
+      await withTimeout(setDoc(doc(db, 'orders', order.id), cleanOrder), 8000);
       return true;
     } catch (err) {
       console.error('Failed to save order to Firebase:', err);
@@ -172,7 +185,7 @@ export const dbService = {
       return true;
     }
     try {
-      await updateDoc(doc(db, 'profiles', id), { role: newRole });
+      await withTimeout(updateDoc(doc(db, 'profiles', id), { role: newRole }), 8000);
       return true;
     } catch (err) {
       console.error('Failed to update user role:', err);
@@ -188,7 +201,7 @@ export const dbService = {
       return true;
     }
     try {
-      await updateDoc(doc(db, 'profiles', id), { role: newRole, permissions });
+      await withTimeout(updateDoc(doc(db, 'profiles', id), { role: newRole, permissions }), 8000);
       return true;
     } catch (err) {
       console.error('Failed to update user role and permissions:', err);
@@ -204,7 +217,7 @@ export const dbService = {
       return true;
     }
     try {
-      await deleteDoc(doc(db, 'profiles', id));
+      await withTimeout(deleteDoc(doc(db, 'profiles', id)), 8000);
       return true;
     } catch (err) {
       console.error('Failed to delete profile:', err);
@@ -220,7 +233,7 @@ export const dbService = {
       return true;
     }
     try {
-      await updateDoc(doc(db, 'laptops', laptop.id), mapFrontendLaptopToDb(laptop));
+      await withTimeout(updateDoc(doc(db, 'laptops', laptop.id), mapFrontendLaptopToDb(laptop)), 8000);
       return true;
     } catch (err) {
       console.error('Failed to update laptop in Firebase:', err);
@@ -243,7 +256,7 @@ export const dbService = {
       try {
         const payload: any = { status };
         if (rejectionReason !== undefined) payload.rejectionReason = rejectionReason;
-        await updateDoc(doc(db, 'orders', orderId), payload);
+        await withTimeout(updateDoc(doc(db, 'orders', orderId), payload), 8000);
         success = true;
       } catch (err) {
         console.error('Failed to update order status:', err);
@@ -390,7 +403,7 @@ export const dbService = {
     const all = local ? JSON.parse(local) : [];
     localStorage.setItem('yt_local_notifications', JSON.stringify([...all, newNotif]));
     if (isFirebaseConfigured() && db) {
-      try { await setDoc(doc(db, 'notifications', newNotif.id), newNotif); } catch (err) {}
+      try { await withTimeout(setDoc(doc(db, 'notifications', newNotif.id), newNotif), 8000); } catch (err) {}
     }
     return newNotif;
   },
@@ -403,7 +416,7 @@ export const dbService = {
       localStorage.setItem('yt_local_notifications', JSON.stringify(updated));
     }
     if (isFirebaseConfigured() && db) {
-      try { await updateDoc(doc(db, 'notifications', id), { read: true }); } catch (err) {}
+      try { await withTimeout(updateDoc(doc(db, 'notifications', id), { read: true }), 8000); } catch (err) {}
     }
     return true;
   },
@@ -420,7 +433,7 @@ export const dbService = {
         const q = query(collection(db, 'notifications'), where('userId', '==', userId));
         const snapshot = await getDocs(q);
         for(const docSnap of snapshot.docs) {
-          await updateDoc(docSnap.ref, { read: true });
+          await withTimeout(updateDoc(docSnap.ref, { read: true }), 8000);
         }
       } catch (err) {}
     }
