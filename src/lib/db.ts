@@ -148,7 +148,7 @@ export const dbService = {
     }
     try {
       const cleanOrder = JSON.parse(JSON.stringify(order));
-      await withTimeout(setDoc(doc(db, 'orders', order.id), cleanOrder), 8000);
+      await withTimeout(setDoc(doc(db, 'orders', order.id), cleanOrder), 3000);
       return true;
     } catch (err) {
       console.error('Failed to save order to Firebase:', err);
