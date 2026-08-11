@@ -325,7 +325,7 @@ export default function App() {
     const newOrder: Order = {
       id: uniqueOrderId,
       userId: currentUser?.id,
-      date: new Date().toLocaleDateString('ar-SA'),
+      date: new Date().toISOString(),
       items: [...cart],
       subtotal,
       tax,

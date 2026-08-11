@@ -30,7 +30,15 @@ function OrderCard({ mainOrder }: { mainOrder: Order; key?: React.Key }) {
           )}
           <div>
             <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
-               {mainOrder.status === 'rejected' ? 'طلب مرفوض' : 'تاريخ الطلب: ' + new Date(mainOrder.date).toLocaleDateString('ar-SA')}
+               {mainOrder.status === 'rejected' ? 'طلب مرفوض' : 'تاريخ الطلب: ' + (() => {
+                 try {
+                   const d = new Date(mainOrder.date);
+                   if (isNaN(d.getTime())) return mainOrder.date;
+                   return d.toLocaleDateString('ar-SA');
+                 } catch {
+                   return mainOrder.date;
+                 }
+               })()}
             </span>
             <h3 className="text-lg font-bold">طلب رقم #{mainOrder.id}</h3>
           </div>
