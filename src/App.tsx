@@ -18,7 +18,8 @@ import BottomNav from './components/BottomNav';
 import Toast from './components/Toast';
 import { dbService } from './lib/db';
 import { auth } from './lib/firebase';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 export default function App() {
   const [activeTab, setActiveTab] = React.useState<ViewTab>('home');
@@ -75,15 +76,57 @@ export default function App() {
     );
 
     if (!configured) {
-      // ── LOCAL MODE: restore session from localStorage immediately ──
-      const saved = dbService.localAuth.getSessionUser();
-      if (saved) {
-        setIsLoggedIn(true);
-        setCurrentUser(saved);
-        if (saved.role === 'admin') setIsAdminAuthenticated(true);
+      if (auth && isFirebaseConfigured()) {
+        // ── FIREBASE AUTH MODE ──
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+          if (firebaseUser) {
+            try {
+              const profileSnap = await getDoc(doc(db, 'profiles', firebaseUser.uid));
+              if (profileSnap.exists()) {
+                const data = profileSnap.data();
+                const userProfile: User = {
+                  id: firebaseUser.uid,
+                  fullName: data.full_name || 'مستخدم',
+                  email: firebaseUser.email || '',
+                  role: data.role || 'user',
+                  createdAt: data.created_at || new Date().toISOString()
+                };
+                setCurrentUser(userProfile);
+                setIsLoggedIn(true);
+                if (data.role === 'admin') setIsAdminAuthenticated(true);
+              } else {
+                const userProfile: User = {
+                  id: firebaseUser.uid,
+                  fullName: firebaseUser.displayName || 'مستخدم',
+                  email: firebaseUser.email || '',
+                  role: 'user',
+                  createdAt: new Date().toISOString()
+                };
+                setCurrentUser(userProfile);
+                setIsLoggedIn(true);
+              }
+            } catch (err) {
+              console.error('Failed to fetch profile', err);
+            }
+          } else {
+            setCurrentUser(null);
+            setIsLoggedIn(false);
+            setIsAdminAuthenticated(false);
+          }
+          setAuthLoading(false);
+        });
+        return () => unsubscribe();
+      } else {
+        // ── LOCAL MODE FALLBACK ──
+        const saved = dbService.localAuth.getSessionUser();
+        if (saved) {
+          setIsLoggedIn(true);
+          setCurrentUser(saved);
+          if (saved.role === 'admin') setIsAdminAuthenticated(true);
+        }
+        setAuthLoading(false);
+        return;
       }
-      setAuthLoading(false);
-      return; // no Supabase listener needed
     }
 
     // ── SUPABASE MODE ──
@@ -728,13 +771,15 @@ export default function App() {
               scrollToTop();
             }}
             onLogout={async () => {
-              // Clear local session first (always safe)
+              if (auth && isFirebaseConfigured()) {
+                await firebaseSignOut(auth);
+              }
+              dbService.supabase.auth.signOut();
               dbService.localAuth.signOut();
-              // Also sign out from Supabase if configured
-              try { await dbService.supabase.auth.signOut(); } catch { }
               setIsLoggedIn(false);
               setCurrentUser(null);
               setIsAdminAuthenticated(false);
+              setCart([]);
               setActiveTab('home');
               scrollToTop();
             }}
@@ -791,8 +836,53 @@ export default function App() {
                     (import.meta.env.VITE_SUPABASE_ANON_KEY as string).startsWith('eyJ')
                   );
 
-                  // ── LOCAL AUTH MODE ──
+                  // ── FIREBASE OR LOCAL AUTH MODE ──
                   if (!supabaseConfigured) {
+                    if (auth && isFirebaseConfigured()) {
+                      try {
+                        const userCred = await signInWithEmailAndPassword(auth, email.trim(), password);
+                        const profileSnap = await getDoc(doc(db, 'profiles', userCred.user.uid));
+                        if (profileSnap.exists()) {
+                          const data = profileSnap.data();
+                          const userProfile: User = {
+                            id: userCred.user.uid,
+                            fullName: data.full_name || 'مستخدم',
+                            email: userCred.user.email || '',
+                            role: data.role || 'user',
+                            createdAt: data.created_at || new Date().toISOString()
+                          };
+                          setCurrentUser(userProfile);
+                          setIsLoggedIn(true);
+                          if (data.role === 'admin') {
+                            setIsAdminAuthenticated(true);
+                            setShowAuthModal(false);
+                            window.location.href = '/admin.html';
+                            return;
+                          }
+                        } else {
+                          const userProfile: User = {
+                            id: userCred.user.uid,
+                            fullName: 'مستخدم',
+                            email: userCred.user.email || '',
+                            role: 'user',
+                            createdAt: new Date().toISOString()
+                          };
+                          setCurrentUser(userProfile);
+                          setIsLoggedIn(true);
+                        }
+                        setShowAuthModal(false);
+                        scrollToTop();
+                      } catch (error: any) {
+                        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                          alert('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
+                        } else {
+                          alert('حدث خطأ أثناء تسجيل الدخول: ' + error.message);
+                        }
+                      }
+                      return;
+                    }
+
+                    // Fallback to local auth if Firebase not configured
                     const { user, error } = dbService.localAuth.signIn(email, password);
                     if (error || !user) {
                       const msg = error || 'خطأ في تسجيل الدخول';
@@ -907,8 +997,44 @@ export default function App() {
                     (import.meta.env.VITE_SUPABASE_ANON_KEY as string).startsWith('eyJ')
                   );
 
-                  // ── LOCAL AUTH MODE ──
+                  // ── FIREBASE OR LOCAL AUTH MODE ──
                   if (!supabaseConfigured) {
+                    if (auth && isFirebaseConfigured()) {
+                      try {
+                        const userCred = await createUserWithEmailAndPassword(auth, cleanEmail, userData.password);
+                        const userProfile = {
+                          full_name: userData.fullName,
+                          email: cleanEmail,
+                          role: 'user',
+                          created_at: new Date().toISOString(),
+                          phone: fullPhone
+                        };
+                        await setDoc(doc(db, 'profiles', userCred.user.uid), userProfile);
+                        
+                        setCurrentUser({
+                          id: userCred.user.uid,
+                          fullName: userData.fullName,
+                          email: cleanEmail,
+                          role: 'user',
+                          createdAt: userProfile.created_at,
+                          phone: fullPhone
+                        });
+                        setIsLoggedIn(true);
+                        setShowAuthModal(false);
+                      } catch (error: any) {
+                        if (error.code === 'auth/email-already-in-use') {
+                          alert('هذا البريد الإلكتروني مسجل مسبقاً. يرجى تسجيل الدخول.');
+                          setAuthType('login');
+                        } else if (error.code === 'auth/operation-not-allowed') {
+                          alert('عذراً! تسجيل الدخول بالبريد غير مفعل في Firebase. يرجى تفعيله من (Authentication -> Sign-in method).');
+                        } else {
+                          alert('فشل إنشاء الحساب: ' + error.message);
+                        }
+                      }
+                      return;
+                    }
+
+                    // Fallback to local auth if Firebase not configured
                     const { user, error } = dbService.localAuth.signUp(
                       cleanEmail,
                       userData.password,

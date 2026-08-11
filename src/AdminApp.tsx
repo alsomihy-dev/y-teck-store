@@ -2,6 +2,9 @@ import React from 'react';
 import { LogOut, Shield } from 'lucide-react';
 import { Laptop, Order, User } from './types';
 import { dbService } from './lib/db';
+import { auth, isFirebaseConfigured, db } from './lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import AdminDashboard from './components/AdminDashboard';
 
 // Detect if Supabase is configured with a valid JWT key
@@ -63,8 +66,37 @@ export default function AdminApp() {
   React.useEffect(() => {
     const checkAuth = async () => {
       try {
-        // ── LOCAL MODE: check localAuth session ──
+        // ── LOCAL OR FIREBASE MODE: check auth session ──
         if (!SUPABASE_CONFIGURED) {
+          if (auth && isFirebaseConfigured()) {
+            const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+              if (firebaseUser) {
+                try {
+                  const profileSnap = await getDoc(doc(db, 'profiles', firebaseUser.uid));
+                  if (profileSnap.exists()) {
+                    const data = profileSnap.data();
+                    if (data.role === 'admin') {
+                      setIsAuthenticated(true);
+                      setAdminEmail(firebaseUser.email || '');
+                      setAdminPermissions(data.permissions || []);
+                    } else {
+                      setIsAuthenticated(false);
+                      alert('غير مصرح لك بالدخول إلى لوحة الإدارة');
+                      window.location.href = '/';
+                    }
+                  }
+                } catch (err) {
+                  console.error('Failed to fetch admin profile', err);
+                }
+              } else {
+                setIsAuthenticated(false);
+              }
+              setIsLoading(false);
+            });
+            return;
+          }
+
+          // Fallback to local Auth
           const localUser = dbService.localAuth.getSessionUser();
           if (localUser && localUser.role === 'admin') {
             setIsAuthenticated(true);
