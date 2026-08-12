@@ -162,7 +162,7 @@ export default function ProductDetails({
             </div>
 
             {/* Price Frame block */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm text-right">
+            <div className="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm text-right">
               <div className="flex justify-between items-center mb-4">
                 <div>
                   <span className="text-xs text-slate-400 block">السعر الحالي</span>
@@ -212,7 +212,7 @@ export default function ProductDetails({
             </div>
 
             {/* Contact for Inquiries */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm text-right space-y-4">
+            <div className="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm text-right space-y-3">
               <h3 className="text-base font-bold text-slate-900">للاستفسارات والمساعدة</h3>
               
               <div className="space-y-4">

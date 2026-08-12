@@ -25,7 +25,7 @@ export default function ProductCard({ laptop, onSelect, onAddToCart }: ProductCa
       id={`product-card-${laptop.id}`}
     >
       {/* Product Image Area with Tinted Background */}
-      <div className="bg-slate-50 p-6 flex items-center justify-center relative min-h-[220px]">
+      <div className="bg-slate-50 p-4 flex items-center justify-center relative h-[200px] sm:h-[220px]">
         
         {/* Status Badge */}
         {laptop.statusBadge && (
@@ -48,7 +48,7 @@ export default function ProductCard({ laptop, onSelect, onAddToCart }: ProductCa
         <img
           src={laptop.image}
           alt={laptop.name}
-          className="w-full h-36 object-contain transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
           referrerPolicy="no-referrer"
         />
       </div>

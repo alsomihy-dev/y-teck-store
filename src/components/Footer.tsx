@@ -11,7 +11,7 @@ export default function Footer({ onNavigateCategory, onNavigateTab }: FooterProp
     <footer className="bg-[#0b0e17] text-slate-400 py-16 border-t border-slate-900" dir="rtl" id="app-footer">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-right">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 text-right">
           
           {/* Brand Column */}
           <div className="space-y-4">
