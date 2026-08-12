@@ -162,15 +162,15 @@ export default function ProductDetails({
             </div>
 
             {/* Price Frame block */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm text-right">
-              <div className="flex justify-between items-center mb-4">
+            <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm text-right">
+              <div className="flex justify-between items-center mb-2">
                 <div>
                   <span className="text-xs text-slate-400 block">السعر الحالي</span>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-extrabold text-slate-900">
+                    <span className="text-2xl font-extrabold text-slate-900">
                       {laptop.price.toLocaleString('en-US')}
                     </span>
-                    <span className="text-base font-bold text-slate-900">{laptop.currency || 'ر.س'}</span>
+                    <span className="text-sm font-bold text-slate-900">{laptop.currency || 'ر.س'}</span>
                   </div>
                 </div>
                 
@@ -186,48 +186,48 @@ export default function ProductDetails({
                 )}
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-slate-600 mb-6">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <div className="flex items-center gap-2 text-[10px] text-slate-600 mb-3">
+                <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                 <span>متوفر في المخزون (قطعة واحدة فقط متوفرة!)</span>
               </div>
 
               {/* Major Action Buttons */}
-              <div className="fixed md:static bottom-[4.5rem] left-4 right-4 z-40 bg-white/95 backdrop-blur-md md:bg-transparent md:backdrop-blur-none p-3 md:p-0 border border-slate-200 md:border-none rounded-2xl shadow-xl md:shadow-none flex gap-3 transition-all animate-in slide-in-from-bottom-5 md:animate-none">
+              <div className="fixed md:static bottom-[4.5rem] left-4 right-4 z-40 bg-white/95 backdrop-blur-md md:bg-transparent md:backdrop-blur-none p-3 md:p-0 border border-slate-200 md:border-none rounded-2xl shadow-xl md:shadow-none flex gap-2 transition-all animate-in slide-in-from-bottom-5 md:animate-none">
                 <button
                   onClick={() => onBuyNow(laptop)}
-                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 md:py-4 rounded-xl flex items-center justify-center gap-2 transition-transform hover:scale-[1.01] cursor-pointer shadow-lg shadow-indigo-600/20"
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2 transition-transform hover:scale-[1.01] cursor-pointer shadow-lg shadow-indigo-600/20"
                 >
-                  <ShoppingCart className="w-5 h-5" />
-                  <span className="text-sm md:text-base">شراء الآن</span>
+                  <ShoppingCart className="w-4 h-4" />
+                  <span className="text-sm">شراء الآن</span>
                 </button>
                 
                 <button
                   onClick={() => onAddToCart(laptop)}
-                  className="flex-1 bg-slate-950 hover:bg-slate-800 text-white font-bold py-3.5 md:py-4 rounded-xl flex items-center justify-center gap-2 transition-transform hover:scale-[1.01] cursor-pointer shadow-lg"
+                  className="flex-1 bg-slate-950 hover:bg-slate-800 text-white font-bold py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2 transition-transform hover:scale-[1.01] cursor-pointer shadow-lg"
                 >
-                  <Plus className="w-5 h-5" />
-                  <span className="text-sm md:text-base">للسلة</span>
+                  <Plus className="w-4 h-4" />
+                  <span className="text-sm">للسلة</span>
                 </button>
               </div>
             </div>
 
             {/* Contact for Inquiries */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm text-right space-y-3">
-              <h3 className="text-base font-bold text-slate-900">للاستفسارات والمساعدة</h3>
+            <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm text-right space-y-2">
+              <h3 className="text-sm font-bold text-slate-900">للاستفسارات والمساعدة</h3>
               
-              <div className="space-y-4">
-                <p className="text-slate-600 text-xs leading-relaxed">
+              <div className="space-y-3">
+                <p className="text-slate-500 text-[10px] leading-relaxed">
                   هل لديك أي سؤال حول هذا الجهاز أو ترغب في معاينته بشكل مباشر؟ فريقنا متواجد لمساعدتك في أي وقت.
                 </p>
 
-                <div className="grid grid-cols-2 gap-3 pb-2">
+                <div className="grid grid-cols-2 gap-2 pb-1">
                   <a
                     href="https://wa.me/967776731078"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-center gap-2 border border-emerald-100 transition-colors shadow-sm"
+                    className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 border border-emerald-100 transition-colors shadow-sm"
                   >
-                    <MessageSquare className="w-4 h-4" />
+                    <MessageSquare className="w-3.5 h-3.5" />
                     <span>واتساب</span>
                   </a>
                   
@@ -235,9 +235,9 @@ export default function ProductDetails({
                     href="https://instagram.com/y._e_m"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-center gap-2 border border-rose-100 transition-colors shadow-sm"
+                    className="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 border border-rose-100 transition-colors shadow-sm"
                   >
-                    <Instagram className="w-4 h-4" />
+                    <Instagram className="w-3.5 h-3.5" />
                     <span>إنستجرام</span>
                   </a>
                 </div>
