@@ -337,7 +337,7 @@ export default function AdminDashboard({
                   {laptops.filter(l => (l.quantity ?? 10) < 5).slice(0, 5).map(l => (
                     <div key={l.id} className="flex items-center justify-between p-4 bg-rose-50/50 border border-rose-100 rounded-2xl">
                       <div className="flex items-center gap-3">
-                        <img src={l.image} alt="" className="w-10 h-10 object-contain mix-blend-multiply" />
+                        <img src={l.image} alt="" className="w-10 h-10 object-contain" />
                         <div>
                           <p className="font-bold text-slate-900 text-sm">{l.name}</p>
                           <p className="text-xs text-slate-500 mt-1">{l.brand}</p>

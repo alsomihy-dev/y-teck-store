@@ -126,16 +126,19 @@ export const dbService = {
   async getOrders(): Promise<Order[]> {
     if (!isFirebaseConfigured() || !db) {
       const local = localStorage.getItem('yt_local_orders');
-      return local ? JSON.parse(local) : [];
+      const orders = local ? JSON.parse(local) : [];
+      return orders.sort((a: Order, b: Order) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }
     try {
       const q = query(collection(db, 'orders'));
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
+      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
+      return orders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     } catch (err) {
       console.error('Failed to fetch orders from Firebase:', err);
       const local = localStorage.getItem('yt_local_orders');
-      return local ? JSON.parse(local) : [];
+      const orders = local ? JSON.parse(local) : [];
+      return orders.sort((a: Order, b: Order) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }
   },
 

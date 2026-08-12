@@ -94,8 +94,8 @@ export default function ProductDetails({
             </div>
 
             {/* Condition Report Framework (تقرير الحالة) */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-5 shadow-sm text-right">
-              <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">
+            <div className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-4 space-y-4 shadow-sm text-right">
+              <h3 className="text-[12px] sm:text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
                 تقرير الحالة الفنية
               </h3>
               

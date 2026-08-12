@@ -48,7 +48,7 @@ export default function ProductCard({ laptop, onSelect, onAddToCart }: ProductCa
         <img
           src={laptop.image}
           alt={laptop.name}
-          className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110 scale-105 sm:scale-100"
+          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 scale-105 sm:scale-100"
           referrerPolicy="no-referrer"
         />
       </div>
