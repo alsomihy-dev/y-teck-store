@@ -62,7 +62,7 @@ export const dbService = {
     }
     try {
       const q = query(collection(db, 'laptops'));
-      const snapshot = await withTimeout(getDocs(q), 5000);
+      const snapshot = await getDocs(q);
       if (!snapshot.empty) {
         return snapshot.docs.map(doc => mapDbLaptopToFrontend({ id: doc.id, ...doc.data() }));
       } else {
@@ -115,9 +115,9 @@ export const dbService = {
   async saveInitialLaptops(laptops: Laptop[]) {
     if (!isFirebaseConfigured() || !db) return;
     try {
-      for (const laptop of laptops) {
-        await setDoc(doc(db, 'laptops', laptop.id), mapFrontendLaptopToDb(laptop));
-      }
+      await Promise.all(laptops.map(laptop => 
+        setDoc(doc(db, 'laptops', laptop.id), mapFrontendLaptopToDb(laptop))
+      ));
     } catch (err) {
       console.error('Error seeding initial laptops:', err);
     }
@@ -130,7 +130,7 @@ export const dbService = {
     }
     try {
       const q = query(collection(db, 'orders'));
-      const snapshot = await withTimeout(getDocs(q), 5000);
+      const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
     } catch (err) {
       console.error('Failed to fetch orders from Firebase:', err);
@@ -148,7 +148,7 @@ export const dbService = {
     }
     try {
       const cleanOrder = JSON.parse(JSON.stringify(order));
-      await withTimeout(setDoc(doc(db, 'orders', order.id), cleanOrder), 3000);
+      await withTimeout(setDoc(doc(db, 'orders', order.id), cleanOrder), 8000);
       return true;
     } catch (err) {
       console.error('Failed to save order to Firebase:', err);
@@ -163,7 +163,7 @@ export const dbService = {
     const localUsers = localAuth.getUsers();
     if (!isFirebaseConfigured() || !db) return localUsers;
     try {
-      const snapshot = await withTimeout(getDocs(collection(db, 'profiles')), 5000);
+      const snapshot = await getDocs(collection(db, 'profiles'));
       const dbUsers: User[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
       const dbEmails = new Set(dbUsers.map(u => u.email.toLowerCase()));
       const combined = [...dbUsers];

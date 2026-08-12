@@ -93,7 +93,7 @@ export default function Navbar({
                   onClick={() => handleNavClick('orders')} 
                   className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer relative ${activeTab === 'orders' ? 'text-slate-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900'}`}
                 >
-                  الإشعارات والطلبات
+                  سجل الطلبات
                   {awaitingPaymentCount > 0 && (
                     <span className="absolute -top-1 -right-2 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-bounce shadow-sm">
                       {awaitingPaymentCount}

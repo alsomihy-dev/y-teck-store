@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Check, ShieldAlert, Clock, Truck, CreditCard, Package } from 'lucide-react';
+import { Phone, Check, ShieldAlert, Clock, Truck, CreditCard, Package, CheckCircle2, MessageSquare } from 'lucide-react';
 import { Order } from '../types';
 
 interface OrderHistoryProps {
@@ -331,17 +331,11 @@ function OrderCard({ mainOrder }: { mainOrder: Order; key?: React.Key }) {
 }
 
 export default function OrderHistory({ orders, onBackToHome }: OrderHistoryProps) {
+  const [activeTab, setActiveTab] = React.useState<'active' | 'completed'>('active');
+
   return (
     <div className="py-10 bg-[#f7f9fb] min-h-screen" dir="rtl" id="orders-history-page">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Title */}
-        <div className="flex justify-between items-center mb-8">
-           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 text-right">الإشعارات وسجل الطلبات</h1>
-           <button onClick={onBackToHome} className="text-sm font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-4 py-2 rounded-lg transition-colors cursor-pointer">العودة للرئيسية</button>
-        </div>
-
-
 
         {/* Title row */}
         <div className="flex justify-between items-center mb-8 text-right">
