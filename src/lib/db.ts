@@ -265,6 +265,32 @@ export const dbService = {
         console.error('Failed to update order status:', err);
       }
     }
+    
+    if (success && targetOrder && targetOrder.userId) {
+      const statusMap: Record<string, string> = {
+        'pending_approval': 'قيد المراجعة',
+        'awaiting_payment': 'بانتظار الدفع',
+        'payment_review': 'جاري مراجعة الدفع',
+        'confirmed': 'تم التأكيد',
+        'preparing': 'قيد التجهيز',
+        'on_way': 'في الطريق إليك',
+        'delivered': 'تم التوصيل بنجاح',
+        'rejected': 'مرفوض'
+      };
+      const statusAr = statusMap[status] || status;
+      const message = status === 'rejected' && rejectionReason 
+        ? `عذراً، تم رفض طلبك رقم #${orderId.slice(0,6)} بسبب: ${rejectionReason}`
+        : `تم تحديث حالة طلبك رقم #${orderId.slice(0,6)} إلى: ${statusAr}`;
+        
+      await this.addNotification({
+        userId: targetOrder.userId,
+        title: 'تحديث حالة الطلب',
+        message,
+        type: 'order_status',
+        orderId
+      });
+    }
+    
     return success;
   },
 
