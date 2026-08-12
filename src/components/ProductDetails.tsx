@@ -143,11 +143,11 @@ export default function ProductDetails({
             
             {/* Title & Brand block */}
             <div className="space-y-3 text-right">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="bg-slate-100 text-slate-800 text-xs font-bold px-3 py-1 rounded-full border border-slate-200">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="bg-slate-100 text-slate-800 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-slate-200">
                   حالة ممتازة
                 </span>
-                <span className="bg-blue-50 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-100">
+                <span className="bg-blue-50 text-blue-800 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-blue-100">
                   معتمد من Y TECK
                 </span>
               </div>
@@ -246,16 +246,16 @@ export default function ProductDetails({
 
             {/* Delivery and Guarantees badges */}
             <div className="grid grid-cols-2 gap-2 sm:gap-4">
-              <div className="bg-white border border-slate-200 rounded-2xl p-2 sm:p-3 flex items-center gap-2 sm:gap-3 text-right shadow-sm">
-                <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 shrink-0" />
+              <div className="bg-white border border-slate-200 rounded-2xl p-2 sm:p-3 flex items-center gap-2 text-right shadow-sm">
+                <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-slate-900 shrink-0" />
                 <div>
                   <span className="block text-[10px] sm:text-xs font-bold text-slate-900">ضمان سنة معتمد</span>
                   <span className="text-[9px] sm:text-[10px] text-slate-400">شامل العتاد والقطع</span>
                 </div>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-2xl p-2 sm:p-3 flex items-center gap-2 sm:gap-3 text-right shadow-sm">
-                <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 shrink-0" />
+              <div className="bg-white border border-slate-200 rounded-2xl p-2 sm:p-3 flex items-center gap-2 text-right shadow-sm">
+                <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-slate-900 shrink-0" />
                 <div>
                   <span className="block text-[10px] sm:text-xs font-bold text-slate-900">شحن مجاني</span>
                   <span className="text-[9px] sm:text-[10px] text-slate-400">توصيل آمن للمنزل</span>
